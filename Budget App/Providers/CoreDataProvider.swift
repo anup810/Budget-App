@@ -22,7 +22,7 @@ class CoreDataProvider{
         //dummy data
         let entertaiment = Budget(context: context)
         entertaiment.title = "Movie"
-        entertaiment.amount = 100
+        entertaiment.limit = 100
         entertaiment.dateCreated = Date()
         
         do{

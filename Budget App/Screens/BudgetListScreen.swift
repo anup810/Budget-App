@@ -14,9 +14,7 @@ struct BudgetListScreen: View {
         NavigationStack{
             VStack{
                 List(budgets){budget in
-                    Text(budget.title ?? "")
-                    Text(String(format: "%.2f", budget.amount))
-                   // Text(budget.dateCreated)
+                    BudgetCellView(budget: budget)
                     
                 }
             }.navigationTitle("Budget App")
@@ -26,9 +24,10 @@ struct BudgetListScreen: View {
                             isPresented = true
                         }
                     }
-                }.sheet(isPresented: $isPresented, content: {
+                }.sheet(isPresented: $isPresented) {
                     AddBudgetScreen()
-                })
+                        .presentationDetents([.medium]) 
+                }
         }
     }
 }
@@ -38,3 +37,4 @@ struct BudgetListScreen: View {
         BudgetListScreen()
     }.environment(\.managedObjectContext, CoreDataProvider.preview.context)
 }
+
