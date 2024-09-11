@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct Budget_AppApp: App {
+    let provider: CoreDataProvider
+    init(){
+        provider = CoreDataProvider()
+    }
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.managedObjectContext, provider.context)
         }
     }
 }
