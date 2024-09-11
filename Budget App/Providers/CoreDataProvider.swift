@@ -14,6 +14,28 @@ class CoreDataProvider{
     var context: NSManagedObjectContext{
         persistentContainer.viewContext
     }
+    //data for preview
+    static var preview: CoreDataProvider = {
+        let provider = CoreDataProvider(inMemory: true)
+        let context = provider.context
+        
+        //dummy data
+        let entertaiment = Budget(context: context)
+        entertaiment.title = "Movie"
+        entertaiment.amount = 100
+        entertaiment.dateCreated = Date()
+        
+        do{
+            try context.save()
+        }catch{
+            print(error)
+        }
+        return provider
+    }()
+    
+    
+    
+    
     
     init(inMemory:Bool = false){
         persistentContainer = NSPersistentContainer(name: "BudgetAppModel")
