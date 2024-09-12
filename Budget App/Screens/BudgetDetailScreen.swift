@@ -8,18 +8,37 @@
 import SwiftUI
 
 struct BudgetDetailScreen: View {
-    @Environment(\.managedObjectContext) private var context
     let budget: Budget
+    
+    @Environment(\.managedObjectContext) private var context
+    @FetchRequest(sortDescriptors: []) private var expenses: FetchedResults<Expense>
+    
+    init(budget: Budget){
+        self.budget = budget
+        _expenses = FetchRequest(sortDescriptors: [],predicate: NSPredicate(format: "budget == %@", budget))
+    }
+    
     @State private var title: String = ""
     @State private var amount:Double?
     @State private var errorMessage = ""
+    
     private var isFormValid: Bool{
         !title.isEmptyOrWhitespace && amount != nil && Double(amount!) > 0
+    }
+    private var total:Double {
+        return expenses.reduce(0){result,expense in
+            expense.amount + result
+            
+        }
+    }
+    private var remaining: Double{
+        budget.limit - total
     }
     private func addExpense(){
         let expense = Expense(context: context)
         expense.title = title
-        expense.amount = amount ?? 0.0
+        expense.amount = amount ?? 0
+        expense.dateCreated = Date()
         budget.addToExpense(expense)
         do{
             try context.save()
@@ -30,9 +49,40 @@ struct BudgetDetailScreen: View {
         }
         
     }
+    private func deleteExpense(indexSet: IndexSet){
+        indexSet.forEach { index in
+            let expense = expenses[index]
+            context.delete(expense)
+        }
+        do{
+            try context.save()
+            
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
     var body: some View {
         
         NavigationStack {
+            VStack {
+                HStack {
+                    Text("Total Budget:")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(budget.limit, format: .currency(code: Locale.currencyCode))
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                }
+                .padding()
+                .background(
+                    Color.blue.opacity(0.1) 
+                )
+                .cornerRadius(10)
+                .padding(.horizontal)
+            }
+
             Form{
                 Section("New Expenses"){
                     TextField("Title", text: $title)
@@ -45,8 +95,37 @@ struct BudgetDetailScreen: View {
                     }).buttonStyle(.borderedProminent)
                         .disabled(!isFormValid)
                 }
+                Section("Expenses"){
+                    List{
+
+                        ForEach(expenses){expense in
+                            ExpenseCellView(expense: expense)
+                            
+                        }.onDelete(perform: { indexSet in
+                            deleteExpense(indexSet: indexSet)
+
+                        })
+                        VStack{
+                            HStack {
+                                Spacer()
+                                Text("Total Expenses")
+                                Text(total,format: .currency(code: Locale.currencyCode))
+                                Spacer()
+                            }
+                            HStack {
+                                Spacer()
+                                Text("Remaining Budget")
+                                Text(remaining,format: .currency(code: Locale.currencyCode))
+                                    .foregroundStyle(remaining < 0 ? .red : .green)
+                                Spacer()
+                            }
+                        }
+                    }
+                    
+                }
                 
             }.navigationTitle(budget.title ?? "")
+            
         }
     }
 }
@@ -54,7 +133,7 @@ struct BudgetDetailScreen: View {
 struct BudgetDetailScreenContainer:View {
     @FetchRequest(sortDescriptors: []) private var budgets: FetchedResults<Budget>
     var body: some View {
-        BudgetDetailScreen(budget: budgets[0])
+        BudgetDetailScreen(budget: budgets.first(where: {$0.title == "Vegs"})!)
     }
 }
 
@@ -65,3 +144,4 @@ struct BudgetDetailScreenContainer:View {
     }
     
 }
+
