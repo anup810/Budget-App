@@ -14,7 +14,11 @@ struct BudgetListScreen: View {
         NavigationStack{
             VStack{
                 List(budgets){budget in
-                    BudgetCellView(budget: budget)
+                    NavigationLink {
+                        BudgetDetailScreen(budget: budget)
+                    } label: {
+                        BudgetCellView(budget: budget)
+                    }
                     
                 }
             }.navigationTitle("Budget App")
@@ -26,7 +30,7 @@ struct BudgetListScreen: View {
                     }
                 }.sheet(isPresented: $isPresented) {
                     AddBudgetScreen()
-                        .presentationDetents([.medium]) 
+                        .presentationDetents([.medium])
                 }
         }
     }

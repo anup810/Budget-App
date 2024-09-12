@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct BudgetCellView: View {
-    @Environment(\.managedObjectContext) private var context
     let budget : Budget
     var body: some View {
         HStack {
@@ -19,13 +18,15 @@ struct BudgetCellView: View {
     }
 }
 
-
-    #Preview {
-        // Use the dummy data from CoreDataProvider.preview
-        let context = CoreDataProvider.preview.context
-        let budgets = try? context.fetch(Budget.fetchRequest()) as? [Budget]
-        
-        // Pass the first dummy budget to the preview if available
-        return BudgetCellView(budget: budgets?.first ?? Budget(context: context))
+struct BudgetCellViewContainer: View{
+    @FetchRequest(sortDescriptors: []) private var budgets: FetchedResults<Budget>
+    var body: some View{
+        BudgetCellView(budget: budgets[0])
+    }
+}
+#Preview {
+  BudgetCellViewContainer()
+        .environment(\.managedObjectContext,CoreDataProvider.preview.context)
+    
 }
 
