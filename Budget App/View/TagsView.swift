@@ -38,7 +38,7 @@ struct TagsView: View {
                         .foregroundColor(selectedTags.contains(tag) ? .white : .black)
                 }
             }
-            .padding(.horizontal)
+            //.padding(.horizontal)
         }
     }
 }
