@@ -21,9 +21,10 @@ struct BudgetDetailScreen: View {
     @State private var title: String = ""
     @State private var amount:Double?
     @State private var errorMessage = ""
+    @State private var selectedTags: Set<Tag> = []
     
     private var isFormValid: Bool{
-        !title.isEmptyOrWhitespace && amount != nil && Double(amount!) > 0
+        !title.isEmptyOrWhitespace && amount != nil && Double(amount!) > 0 && !selectedTags.isEmpty
     }
     private var total:Double {
         return expenses.reduce(0){result,expense in
@@ -39,6 +40,7 @@ struct BudgetDetailScreen: View {
         expense.title = title
         expense.amount = amount ?? 0
         expense.dateCreated = Date()
+        expense.tags = NSSet(array: Array(selectedTags))
         budget.addToExpense(expense)
         do{
             try context.save()
@@ -87,6 +89,9 @@ struct BudgetDetailScreen: View {
                 Section("New Expenses"){
                     TextField("Title", text: $title)
                     TextField("Amount",value: $amount,format: .number)
+                    
+                    TagsView(selectedTags: $selectedTags)
+                    
                     Button(action: {
                         addExpense()
                     }, label: {
@@ -98,7 +103,6 @@ struct BudgetDetailScreen: View {
 
                 Section("Expenses"){
                     List{
-
                         ForEach(expenses){expense in
                             ExpenseCellView(expense: expense)
                             
@@ -124,7 +128,6 @@ struct BudgetDetailScreen: View {
                     }
                     
                 }
-                
                 
             }
             .navigationTitle(budget.title ?? "")

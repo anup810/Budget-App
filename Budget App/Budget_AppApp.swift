@@ -24,7 +24,7 @@ struct Budget_AppApp: App {
                         let commonTags = ["Food","Dining","Travel","Entertainment","Shopping","Transportation","Utilities","Groceries","Health","Education"]
                         do{
                             try tagSeeder.seed(commonTags: commonTags)
-                            UserDefaults.setValue(true, forKey: "hasSeedData")
+                            UserDefaults.standard.setValue(true, forKey: "hasSeedData")
                         }catch{
                             print(error)
                         }

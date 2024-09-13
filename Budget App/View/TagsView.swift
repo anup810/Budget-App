@@ -13,7 +13,7 @@ struct TagsView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) { 
+            HStack(spacing: 10) {
                 ForEach(tags) { tag in
                     Text(tag.name ?? "")
                         .font(.headline)

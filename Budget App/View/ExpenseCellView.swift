@@ -10,10 +10,26 @@ import SwiftUI
 struct ExpenseCellView: View {
     let expense: Expense
     var body: some View {
-        HStack {
-            Text(expense.title ?? "")
-            Spacer()
-            Text(expense.amount, format: .currency(code: Locale.currencyCode))
+        VStack(alignment:.leading) {
+            HStack {
+                Text(expense.title ?? "")
+                Spacer()
+                Text(expense.amount, format: .currency(code: Locale.currencyCode))
+
+            }
+            ScrollView(.horizontal){
+                HStack{
+                    ForEach(Array(expense.tags as? Set<Tag> ?? [])){ tag in
+                        Text(tag.name ?? "")
+                            .font(.caption)
+                            .padding(6)
+                            .foregroundStyle(.white)
+                            .background(.blue)
+                            .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
+                        
+                    }
+                }
+            }
         }
     }
 }
@@ -21,7 +37,8 @@ struct ExpenseCellView: View {
 struct ExpenseCellContainer: View {
     @FetchRequest(sortDescriptors: []) private var expense : FetchedResults<Expense>
     var body: some View {
-        ExpenseCellView(expense: expense[0])
+        ExpenseCellView(expense: expense[1])
+            
     }
 }
 
