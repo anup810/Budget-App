@@ -94,7 +94,8 @@ struct BudgetDetailScreen: View {
                             .frame(maxWidth: .infinity)
                     }).buttonStyle(.borderedProminent)
                         .disabled(!isFormValid)
-                }
+                }//.listRowBackground(Color.blue.opacity(0.1))
+
                 Section("Expenses"){
                     List{
 
@@ -124,7 +125,9 @@ struct BudgetDetailScreen: View {
                     
                 }
                 
-            }.navigationTitle(budget.title ?? "")
+                
+            }
+            .navigationTitle(budget.title ?? "")
             
         }
     }
